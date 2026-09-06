@@ -337,7 +337,7 @@ local function CreateBattle(Name)
 
 				if OtherButton then
 					OtherButton.Text = "SELECT"
-					OtherButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+					OtherButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 				end
 			end
 		end
