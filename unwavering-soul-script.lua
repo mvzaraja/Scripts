@@ -667,7 +667,7 @@ Closebtn.TextScaled = true
 Closebtn.Font = Enum.Font.Arcade
 Closebtn.Visible = false
 
-Border(Closebtn, 3)
+
 
 
 
@@ -732,7 +732,7 @@ Frame.Visible = true
 Closebtn.Activated:Connect(function()
 	Frame.Visible = not Frame.Visible
 end)
-
+Border(Closebtn, 3)
 task.wait(10)
 
 Tween(Intro, 1, {ImageTransparency = 1})
