@@ -177,6 +177,7 @@ BattleHeader.Font = Enum.Font.Arcade
 Border(BattleHeader, 3)
 
 
+-- SEARCH BUTTON / BOX
 local SearchBox = Instance.new("TextBox")
 SearchBox.Parent = Frame
 SearchBox.Size = UDim2.new(0.9, 0, 0.055, 0)
@@ -285,7 +286,11 @@ local function UpdateBattle()
 
 	for i,v in pairs(FindAllBattles) do
 		if v:IsA("Model") then
-			CreateBattle(v.Name)
+			local TeleportConfig = v:FindFirstChild("TeleporterConfig")
+			if TeleportConfig then
+				local Settings = require(TeleportConfig)
+				CreateBattle(Settings.Destination.." REQUIRD LEVEL: "..Settings.RequiredLevel)
+			end
 		end
 	end
 
