@@ -275,11 +275,12 @@ local function CreateBattle(Name)
 	ActiveButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	ActiveButton.BorderSizePixel = 0
 	ActiveButton.Text = "SELECT"
-	ActiveButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	ActiveButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 	ActiveButton.TextScaled = true
 	ActiveButton.Font = Enum.Font.Arcade
 	ActiveButton.AutoButtonColor = false
-
+	
+	Border(ActiveButton, 2)
 	Container(ActiveButton, 2)
 
    Battle:SetAttribute("EnemyName", Settings.Destination)
