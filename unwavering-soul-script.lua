@@ -28,7 +28,6 @@ Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 Frame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
 Frame.BorderSizePixel = 0
 Frame.Active = true
-Frame.Visible = false
 Frame.Draggable = true
 
 local FrameStroke = Instance.new("UIStroke")
@@ -238,57 +237,57 @@ local function CreateBattle(Name)
 
 		if TeleporterConfig then
 			local Settings = require(TeleporterConfig)
-			
-	local Battle = Instance.new("Frame")
-	Battle.Parent = ScrollingBattle
-	Battle.Size = UDim2.new(1, 0, 0, 52)
-	Battle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	Battle.BorderSizePixel = 0
 
-	Container(Battle, 2)
+			local Battle = Instance.new("Frame")
+			Battle.Parent = ScrollingBattle
+			Battle.Size = UDim2.new(1, 0, 0, 52)
+			Battle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Battle.BorderSizePixel = 0
 
-	local EnemyName = Instance.new("TextLabel")
-	EnemyName.Parent = Battle
-	EnemyName.Name = "EnemyName"
-	EnemyName.BackgroundTransparency = 1
-	EnemyName.Position = UDim2.new(0, 10, 0, 3)
-	EnemyName.Size = UDim2.new(1, -100, 0, 22)
-	EnemyName.Text = "▶  " .. Settings.Destination
-	EnemyName.TextColor3 = Color3.fromRGB(255, 255, 255)
-	EnemyName.TextScaled = true
-	EnemyName.Font = Enum.Font.Arcade
-	EnemyName.TextXAlignment = Enum.TextXAlignment.Left
+			Container(Battle, 2)
 
-	local Requirements = Instance.new("TextLabel")
-	Requirements.Parent = Battle
-	Requirements.BackgroundTransparency = 1
-	Requirements.Position = UDim2.new(0, 10, 0, 27)
-	Requirements.Size = UDim2.new(1, -100, 0, 18)
-	Requirements.Text = "Loading requirements..."
-	Requirements.TextColor3 = Color3.fromRGB(180, 180, 180)
-	Requirements.TextScaled = true
-	Requirements.Font = Enum.Font.Arcade
-	Requirements.TextXAlignment = Enum.TextXAlignment.Left
+			local EnemyName = Instance.new("TextLabel")
+			EnemyName.Parent = Battle
+			EnemyName.Name = "EnemyName"
+			EnemyName.BackgroundTransparency = 1
+			EnemyName.Position = UDim2.new(0, 10, 0, 3)
+			EnemyName.Size = UDim2.new(1, -100, 0, 22)
+			EnemyName.Text = "▶  " .. Settings.Destination
+			EnemyName.TextColor3 = Color3.fromRGB(255, 255, 255)
+			EnemyName.TextScaled = true
+			EnemyName.Font = Enum.Font.Arcade
+			EnemyName.TextXAlignment = Enum.TextXAlignment.Left
 
-	local ActiveButton = Instance.new("TextButton")
-	ActiveButton.Parent = Battle
-	ActiveButton.Name = "ActiveButton"
-	ActiveButton.Size = UDim2.new(0, 75, 0, 34)
-	ActiveButton.Position = UDim2.new(1, -83, 0.5, -17)
-	ActiveButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	ActiveButton.BorderSizePixel = 0
-	ActiveButton.Text = "SELECT"
-	ActiveButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-	ActiveButton.TextScaled = true
-	ActiveButton.Font = Enum.Font.Arcade
-	ActiveButton.AutoButtonColor = false
-	
-	Border(ActiveButton, 2)
-	Container(ActiveButton, 2)
+			local Requirements = Instance.new("TextLabel")
+			Requirements.Parent = Battle
+			Requirements.BackgroundTransparency = 1
+			Requirements.Position = UDim2.new(0, 10, 0, 27)
+			Requirements.Size = UDim2.new(1, -100, 0, 18)
+			Requirements.Text = "Loading requirements..."
+			Requirements.TextColor3 = Color3.fromRGB(180, 180, 180)
+			Requirements.TextScaled = true
+			Requirements.Font = Enum.Font.Arcade
+			Requirements.TextXAlignment = Enum.TextXAlignment.Left
 
-   Battle:SetAttribute("EnemyName", Settings.Destination)
+			local ActiveButton = Instance.new("TextButton")
+			ActiveButton.Parent = Battle
+			ActiveButton.Name = "ActiveButton"
+			ActiveButton.Size = UDim2.new(0, 75, 0, 34)
+			ActiveButton.Position = UDim2.new(1, -83, 0.5, -17)
+			ActiveButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			ActiveButton.BorderSizePixel = 0
+			ActiveButton.Text = "SELECT"
+			ActiveButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+			ActiveButton.TextScaled = true
+			ActiveButton.Font = Enum.Font.Arcade
+			ActiveButton.AutoButtonColor = false
 
-	
+			Border(ActiveButton, 2)
+			Container(ActiveButton, 2)
+
+			Battle:SetAttribute("EnemyName", Settings.Destination)
+
+
 
 			local RequiredLevel = Settings.RequiredLevel or 0
 			local RequiredTP = Settings.RequiredTP or 0
@@ -301,58 +300,58 @@ local function CreateBattle(Name)
 				"  |  RESET " .. RequiredReset ..
 				"  |  TRUE RESET " .. RequiredTrueReset
 
-	Battle.MouseEnter:Connect(function()
-		TweenService:Create(
-			Battle,
-			TweenInfo.new(0.1),
-			{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
-		):Play()
-	end)
+			Battle.MouseEnter:Connect(function()
+				TweenService:Create(
+					Battle,
+					TweenInfo.new(0.1),
+					{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+				):Play()
+			end)
 
-	Battle.MouseLeave:Connect(function()
-		TweenService:Create(
-			Battle,
-			TweenInfo.new(0.1),
-			{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
-		):Play()
-	end)
+			Battle.MouseLeave:Connect(function()
+				TweenService:Create(
+					Battle,
+					TweenInfo.new(0.1),
+					{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
+				):Play()
+			end)
 
-	ActiveButton.MouseEnter:Connect(function()
-		TweenService:Create(
-			ActiveButton,
-			TweenInfo.new(0.1),
-			{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
-		):Play()
-	end)
+			ActiveButton.MouseEnter:Connect(function()
+				TweenService:Create(
+					ActiveButton,
+					TweenInfo.new(0.1),
+					{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+				):Play()
+			end)
 
-	ActiveButton.MouseLeave:Connect(function()
-		TweenService:Create(
-			ActiveButton,
-			TweenInfo.new(0.1),
-			{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
-		):Play()
-	end)
+			ActiveButton.MouseLeave:Connect(function()
+				TweenService:Create(
+					ActiveButton,
+					TweenInfo.new(0.1),
+					{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
+				):Play()
+			end)
 
-	ActiveButton.MouseButton1Click:Connect(function()
-		for _, Other in ScrollingBattle:GetChildren() do
-			if Other:IsA("Frame") then
-				local OtherButton = Other:FindFirstChild("ActiveButton")
+			ActiveButton.MouseButton1Click:Connect(function()
+				for _, Other in ScrollingBattle:GetChildren() do
+					if Other:IsA("Frame") then
+						local OtherButton = Other:FindFirstChild("ActiveButton")
 
-				if OtherButton then
-					OtherButton.Text = "SELECT"
-					OtherButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+						if OtherButton then
+							OtherButton.Text = "SELECT"
+							OtherButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+						end
+					end
 				end
-			end
+
+				ActiveButton.Text = "ACTIVE"
+				ActiveButton.TextColor3 = Color3.fromRGB(55, 255, 0)
+
+				CurrentlyFarming = Name
+			end)
+
+			return Battle
 		end
-
-		ActiveButton.Text = "ACTIVE"
-		ActiveButton.TextColor3 = Color3.fromRGB(55, 255, 0)
-
-		CurrentlyFarming = Name
-	end)
-
-	return Battle
-	end
 	end
 end
 
@@ -492,7 +491,7 @@ end)
 
 AutoSmartButon.MouseButton1Click:Connect(function()
 	SmartFarm = not SmartFarm
-	
+
 	if SmartFarm then
 		AutoSmartButon.Text = "AUTO SMART FARM  :  ON"
 	else
@@ -548,105 +547,105 @@ end)
 
 local OnCombat = game.Players.LocalPlayer.Character:FindFirstChild("OnCombat")
 game.RunService.RenderStepped:Connect(function()
-		if SmartFarm == true and OnCombat.Value == false then
+	if SmartFarm == true and OnCombat.Value == false then
 
-			local Player = game.Players.LocalPlayer
-			local leaderstats = Player:FindFirstChild("leaderstats")
-			print("Checking player stats...")
-			if leaderstats then
-				print("Leaderstats Found")
-		     	local Level = leaderstats:FindFirstChild("LV")
-			    local TP = leaderstats:FindFirstChild("TP")
-				local Reset = leaderstats:FindFirstChild("Reset")
-		     	local TrueReset = leaderstats:FindFirstChild("TrueReset")
+		local Player = game.Players.LocalPlayer
+		local leaderstats = Player:FindFirstChild("leaderstats")
+		print("Checking player stats...")
+		if leaderstats then
+			print("Leaderstats Found")
+			local Level = leaderstats:FindFirstChild("LV")
+			local TP = leaderstats:FindFirstChild("TP")
+			local Reset = leaderstats:FindFirstChild("Reset")
+			local TrueReset = leaderstats:FindFirstChild("TrueReset")
 
-				if Level and TP and Reset and TrueReset then
-					print("Checking Levels Resets Tp TRUES TReEtss")
-					local PlayerLevel = Level.Value
-					local PlayerTP = TP.Value
-					local PlayerReset = Reset.Value
-					local PlayerTrueReset = TrueReset.Value
+			if Level and TP and Reset and TrueReset then
+				print("Checking Levels Resets Tp TRUES TReEtss")
+				local PlayerLevel = Level.Value
+				local PlayerTP = TP.Value
+				local PlayerReset = Reset.Value
+				local PlayerTrueReset = TrueReset.Value
 
-					local BestBattle = nil
-					local BestSettings = nil
+				local BestBattle = nil
+				local BestSettings = nil
 
-					local BestReset = -math.huge
-					local BestTrueReset = -math.huge
-					local BestLevel = -math.huge
+				local BestReset = -math.huge
+				local BestTrueReset = -math.huge
+				local BestLevel = -math.huge
 
-					for _, v in pairs(game.Workspace.Portals:GetChildren()) do
+				for _, v in pairs(game.Workspace.Portals:GetChildren()) do
 
-						if v:IsA("Model") then
+					if v:IsA("Model") then
 
-							local TelepoterConfig = v:FindFirstChild("TeleporterConfig")
+						local TelepoterConfig = v:FindFirstChild("TeleporterConfig")
 
-							if TelepoterConfig then
-								print("FOUND TELEPORTERCONFIG")
-								local Settings = require(TelepoterConfig)
+						if TelepoterConfig then
+							print("FOUND TELEPORTERCONFIG")
+							local Settings = require(TelepoterConfig)
 
-								local RequiredLevel = Settings.RequiredLevel or 0
-								local RequiredTP = Settings.RequiredTP or 0
-								local RequiredReset = Settings.RequiredReset or 0
-								local RequiredTrueReset = Settings.RequiredTrueReset or 0
+							local RequiredLevel = Settings.RequiredLevel or 0
+							local RequiredTP = Settings.RequiredTP or 0
+							local RequiredReset = Settings.RequiredReset or 0
+							local RequiredTrueReset = Settings.RequiredTrueReset or 0
 
-								local MeetsRequirements =
-									RequiredLevel <= PlayerLevel
-									and RequiredTP <= PlayerTP
-									and RequiredReset <= PlayerReset
-									and RequiredTrueReset <= PlayerTrueReset
+							local MeetsRequirements =
+								RequiredLevel <= PlayerLevel
+								and RequiredTP <= PlayerTP
+								and RequiredReset <= PlayerReset
+								and RequiredTrueReset <= PlayerTrueReset
 
-								local Within300Levels =
-									PlayerLevel <= RequiredLevel + 300
+							local Within300Levels =
+								PlayerLevel <= RequiredLevel + 300
 
-								if MeetsRequirements and Within300Levels then
+							if MeetsRequirements and Within300Levels then
 
-									local IsBetter = false
+								local IsBetter = false
 
-									if RequiredReset > BestReset then
+								if RequiredReset > BestReset then
+									IsBetter = true
+
+								elseif RequiredReset == BestReset then
+
+									if RequiredTrueReset > BestTrueReset then
 										IsBetter = true
 
-									elseif RequiredReset == BestReset then
-
-										if RequiredTrueReset > BestTrueReset then
-											IsBetter = true
-
-										elseif RequiredTrueReset == BestTrueReset
-											and RequiredLevel > BestLevel then
-											IsBetter = true
-										end
+									elseif RequiredTrueReset == BestTrueReset
+										and RequiredLevel > BestLevel then
+										IsBetter = true
 									end
+								end
 
-									if IsBetter then
-										BestBattle = v
-										BestSettings = Settings
+								if IsBetter then
+									BestBattle = v
+									BestSettings = Settings
 
-										BestReset = RequiredReset
-										BestTrueReset = RequiredTrueReset
-										BestLevel = RequiredLevel
-									end
+									BestReset = RequiredReset
+									BestTrueReset = RequiredTrueReset
+									BestLevel = RequiredLevel
 								end
 							end
 						end
 					end
+				end
 
-					if BestBattle then
-						print("Best Battle:", BestBattle.Name)
-						print("Required Level:", BestSettings.RequiredLevel)
-						print("Required TP:", BestSettings.RequiredTP)
-						print("Required Reset:", BestSettings.RequiredReset)
-						print("Required True Reset:", BestSettings.RequiredTrueReset)
+				if BestBattle then
+					print("Best Battle:", BestBattle.Name)
+					print("Required Level:", BestSettings.RequiredLevel)
+					print("Required TP:", BestSettings.RequiredTP)
+					print("Required Reset:", BestSettings.RequiredReset)
+					print("Required True Reset:", BestSettings.RequiredTrueReset)
 
-						local FindTeleport = BestBattle:FindFirstChild("Head")
-						if FindTeleport then
-							local Character = game.Players.LocalPlayer.Character
-							local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-							if HumanoidRootPart then
-								HumanoidRootPart.CFrame = FindTeleport.CFrame
-							end
+					local FindTeleport = BestBattle:FindFirstChild("Head")
+					if FindTeleport then
+						local Character = game.Players.LocalPlayer.Character
+						local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+						if HumanoidRootPart then
+							HumanoidRootPart.CFrame = FindTeleport.CFrame
 						end
 					end
 				end
 			end
+		end
 	end
 end)
 
@@ -665,81 +664,3 @@ Closebtn.Text = "unwavering-Soul"
 Closebtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Closebtn.TextScaled = true
 Closebtn.Font = Enum.Font.Arcade
-Closebtn.Visible = false
-
-
-
-
-
-local function Tween(Object, Time, goal)
-	TweenService:Create(Object, TweenInfo.new(Time, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), goal):Play()
-end
-
-Frame.Visible = false
-Closebtn.Visible = false
-
-local BlackScreen = Instance.new("Frame", GUI)
-BlackScreen.Size = UDim2.new(1, 0,1, 0)
-BlackScreen.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-BlackScreen.ZIndex = 1000
-BlackScreen.Visible = true
-BlackScreen.BackgroundTransparency = 1
-
-local Intro = Instance.new("ImageLabel", GUI)
-Intro.Size = UDim2.new(0.11, 0,0.2, 0)
-Intro.Position = UDim2.new(0.5, 0, 0.5, 0)
-Intro.AnchorPoint = Vector2.new(0.5,0.5)
-
-Intro.Image = "rbxassetid://126590394833011"
-
-Intro.BackgroundColor3 = Color3.fromRGB(35,35,35)
-Intro.ZIndex = 1001
-Intro.ImageTransparency = 1
-Intro.BackgroundTransparency = 1
-
-
-local UiStroke = Instance.new("UIStroke", Intro)
-UiStroke.Color = Color3.fromRGB(255, 255, 255)
-UiStroke.Thickness = 4
-
-local UiScale = Instance.new("UIScale", Intro)
-UiScale.Scale = 5
-
-RunService.RenderStepped:Connect(function()
-	Intro.Rotation += 1
-end)
-
-Tween(BlackScreen, 1, {BackgroundTransparency = 0})
-
-task.wait(1)
-
-Tween(Intro, 1, {BackgroundTransparency = 0})
-Tween(Intro, 1, {ImageTransparency = 0})
-
-task.wait(3)
-
-
-
-Tween(BlackScreen, 1, {BackgroundTransparency = 1})
-Tween(UiScale, 1, {Scale = 1})
-Tween(Intro, 1, {Position = UDim2.new(0.928, 0,0.863, 0)})
-
-task.wait(1.2)
-
-Closebtn.Visible = true
-Frame.Visible = true
-
-Closebtn.Activated:Connect(function()
-	Frame.Visible = not Frame.Visible
-end)
-Border(Closebtn, 3)
-task.wait(10)
-
-Tween(Intro, 1, {ImageTransparency = 1})
-Tween(Intro, 1, {BackgroundTransparency = 1})
-Tween(UiStroke, 1, {Transparency = 1})
-
-task.wait(1)
-
-Intro:Destroy()
-BlackScreen:Destroy()
