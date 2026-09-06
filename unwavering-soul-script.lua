@@ -1,0 +1,373 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local Portals = workspace:FindFirstChild("Portals")
+local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+local CurrentlyFarming
+local Remote = game.ReplicatedStorage.GameRemotes.NotificationToFight
+local TargetPlayer1
+local TargetPlayer2
+local AutoAcp = false
+local AutoInv = false
+
+
+local GUI = Instance.new("ScreenGui")
+GUI.Name = "BattleMenu"
+GUI.ResetOnSpawn = false
+GUI.IgnoreGuiInset = true
+GUI.Parent = PlayerGui
+
+local Frame = Instance.new("Frame")
+Frame.Parent = GUI
+Frame.Size = UDim2.new(0.36, 0, 0.78, 0)
+Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+Frame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+
+local FrameStroke = Instance.new("UIStroke")
+FrameStroke.Parent = Frame
+FrameStroke.Color = Color3.fromRGB(255, 255, 255)
+FrameStroke.Thickness = 4
+
+local function Border(Object, Thickness)
+	local Border = Instance.new("Frame")
+	Border.Name = "Border"
+	Border.Parent = Object.Parent
+	Border.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Border.BorderSizePixel = 0
+	Border.Position = UDim2.new(
+		Object.Position.X.Scale,
+		Object.Position.X.Offset - Thickness,
+		Object.Position.Y.Scale,
+		Object.Position.Y.Offset - Thickness
+	)
+	Border.Size = UDim2.new(
+		Object.Size.X.Scale,
+		Object.Size.X.Offset + Thickness * 2,
+		Object.Size.Y.Scale,
+		Object.Size.Y.Offset + Thickness * 2
+	)
+	Border.ZIndex = Object.ZIndex - 1
+
+	return Border
+end
+
+
+local Title = Instance.new("TextLabel")
+Title.Parent = Frame
+Title.Size = UDim2.new(0.9, 0, 0.085, 0)
+Title.Position = UDim2.new(0.05, 0, 0.025, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "BATTLE CONTROL"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.Font = Enum.Font.Arcade
+
+local Subtitle = Instance.new("TextLabel")
+Subtitle.Parent = Frame
+Subtitle.Size = UDim2.new(0.9, 0, 0.035, 0)
+Subtitle.Position = UDim2.new(0.05, 0, 0.105, 0)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Text = "PLAYER SETTINGS"
+Subtitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+Subtitle.TextScaled = true
+Subtitle.Font = Enum.Font.Arcade
+
+local function CreateSetting(Y, Placeholder)
+	local Container = Instance.new("Frame")
+	Container.Parent = Frame
+	Container.Size = UDim2.new(0.9, 0, 0.1, 0)
+	Container.Position = UDim2.new(0.05, 0, Y, 0)
+	Container.BackgroundTransparency = 1
+
+	local Textbox = Instance.new("TextBox")
+	Textbox.Parent = Container
+	Textbox.Size = UDim2.new(0.68, 0, 1, 0)
+	Textbox.Position = UDim2.new(0, 0, 0, 0)
+	Textbox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	Textbox.BorderSizePixel = 0
+	Textbox.PlaceholderText = Placeholder
+	Textbox.PlaceholderColor3 = Color3.fromRGB(130, 130, 130)
+	Textbox.Text = ""
+	Textbox.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Textbox.TextScaled = true
+	Textbox.Font = Enum.Font.Arcade
+	Textbox.ClearTextOnFocus = false
+	
+	Textbox.FocusLost:Connect(function()
+		if Placeholder == "Auto Accpet Invites From Player" then
+			TargetPlayer1 = Textbox.Text
+		elseif Placeholder == "Auto Invite Player to Battle" then
+			TargetPlayer2 = Textbox.Text
+		end
+	end)
+
+	Border(Textbox, 3)
+
+	local Button = Instance.new("TextButton")
+	Button.Parent = Container
+	Button.Size = UDim2.new(0.25, 0, 1, 0)
+	Button.Position = UDim2.new(0.75, 0, 0, 0)
+	Button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	Button.BorderSizePixel = 0
+	Button.Text = "OFF"
+	Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Button.TextScaled = true
+	Button.Font = Enum.Font.Arcade
+	Button.AutoButtonColor = false
+
+	Border(Button, 3)
+
+	local Enabled = false
+
+	Button.MouseEnter:Connect(function()
+		TweenService:Create(
+			Button,
+			TweenInfo.new(0.12),
+			{BackgroundColor3 = Color3.fromRGB(45, 45, 45)}
+		):Play()
+	end)
+
+	Button.MouseLeave:Connect(function()
+		TweenService:Create(
+			Button,
+			TweenInfo.new(0.12),
+			{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
+		):Play()
+	end)
+
+	Button.MouseButton1Click:Connect(function()
+		if Placeholder == "Auto Accpet Invites From Player" then
+		Enabled = not Enabled
+		Button.Text = Enabled and "ON" or "OFF"
+		AutoAcp = Enabled
+		elseif Placeholder == "Auto Invite Player to Battle" then
+		Enabled = not Enabled
+		Button.Text = Enabled and "ON" or "OFF"
+		AutoInv = Enabled
+		end
+	end)
+
+	return Textbox, Button
+end
+
+local TextboxPlayer, AutoACPInviteButton =
+	CreateSetting(0.155, "Auto Accpet Invites From Player")
+
+local TextboxPlayer2, AutoInviteButton =
+	CreateSetting(0.275, "Auto Invite Player to Battle")
+
+
+
+local BattleHeader = Instance.new("TextLabel")
+BattleHeader.Parent = Frame
+BattleHeader.Size = UDim2.new(0.9, 0, 0.065, 0)
+BattleHeader.Position = UDim2.new(0.05, 0, 0.405, 0)
+BattleHeader.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BattleHeader.BorderSizePixel = 0
+BattleHeader.Text = "AVAILABLE BATTLES"
+BattleHeader.TextColor3 = Color3.fromRGB(255, 255, 255)
+BattleHeader.TextScaled = true
+BattleHeader.Font = Enum.Font.Arcade
+
+Border(BattleHeader, 3)
+
+
+
+local ScrollingBattle = Instance.new("ScrollingFrame")
+ScrollingBattle.Parent = Frame
+ScrollingBattle.Size = UDim2.new(0.9, 0, 0.32, 0)
+ScrollingBattle.Position = UDim2.new(0.05, 0, 0.475, 0)
+ScrollingBattle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingBattle.BorderSizePixel = 0
+ScrollingBattle.ScrollBarThickness = 3
+ScrollingBattle.ScrollBarImageColor3 = Color3.fromRGB(255, 255, 255)
+ScrollingBattle.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ScrollingBattle.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+Border(ScrollingBattle, 3)
+
+local Padding = Instance.new("UIPadding")
+Padding.Parent = ScrollingBattle
+Padding.PaddingTop = UDim.new(0, 7)
+Padding.PaddingBottom = UDim.new(0, 7)
+Padding.PaddingLeft = UDim.new(0, 7)
+Padding.PaddingRight = UDim.new(0, 7)
+
+local Layout = Instance.new("UIListLayout")
+Layout.Parent = ScrollingBattle
+Layout.Padding = UDim.new(0, 7)
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+
+local function CreateBattle(Name)
+	local Battle = Instance.new("TextButton")
+	Battle.Parent = ScrollingBattle
+	Battle.Size = UDim2.new(1, 0, 0, 42)
+	Battle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	Battle.BorderSizePixel = 0
+	Battle.Text = "▶  " .. Name
+	Battle.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Battle.TextScaled = true
+	Battle.Font = Enum.Font.Arcade
+	Battle.TextXAlignment = Enum.TextXAlignment.Left
+	Battle.AutoButtonColor = false
+
+	local Padding = Instance.new("UIPadding")
+	Padding.Parent = Battle
+	Padding.PaddingLeft = UDim.new(0, 10)
+
+	Border(Battle, 2)
+
+	Battle.MouseEnter:Connect(function()
+		TweenService:Create(
+			Battle,
+			TweenInfo.new(0.1),
+			{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+		):Play()
+
+		Battle.Text = "▶  " .. Name
+	end)
+
+	Battle.MouseLeave:Connect(function()
+		TweenService:Create(
+			Battle,
+			TweenInfo.new(0.1),
+			{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
+		):Play()
+	end)
+
+	Battle.MouseButton1Click:Connect(function()
+		for _, Other in ScrollingBattle:GetChildren() do
+			if Other:IsA("TextButton") then
+				Other.TextColor3 = Color3.fromRGB(180, 180, 180)
+			end
+		end
+
+		Battle.TextColor3 = Color3.fromRGB(55, 255, 0)
+		Battle.Text = "◆  " .. Name
+		CurrentlyFarming = Name
+	end)
+
+	return Battle
+end
+
+local function UpdateBattle()
+	local FindAllBattles = Portals:GetChildren()
+	
+	for i,v in pairs(FindAllBattles) do
+		if v:IsA("Model") then
+			CreateBattle(v.Name)
+		end
+	end
+end
+
+UpdateBattle()
+Portals.ChildAdded:Connect(UpdateBattle)
+Portals.ChildRemoved:Connect(UpdateBattle)
+
+local FarmHeader = Instance.new("TextLabel")
+FarmHeader.Parent = Frame
+FarmHeader.Size = UDim2.new(0.9, 0, 0.05, 0)
+FarmHeader.Position = UDim2.new(0.05, 0, 0.815, 0)
+FarmHeader.BackgroundTransparency = 1
+FarmHeader.Text = "AUTOMATION"
+FarmHeader.TextColor3 = Color3.fromRGB(150, 150, 150)
+FarmHeader.TextScaled = true
+FarmHeader.Font = Enum.Font.Arcade
+
+
+local AutoFarmButton = Instance.new("TextButton")
+AutoFarmButton.Parent = Frame
+AutoFarmButton.Size = UDim2.new(0.9, 0, 0.08, 0)
+AutoFarmButton.Position = UDim2.new(0.05, 0, 0.87, 0)
+AutoFarmButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+AutoFarmButton.BorderSizePixel = 0
+AutoFarmButton.Text = "AUTO FARM  :  OFF"
+AutoFarmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoFarmButton.TextScaled = true
+AutoFarmButton.Font = Enum.Font.Arcade
+AutoFarmButton.AutoButtonColor = false
+
+Border(AutoFarmButton, 3)
+
+local Farming = false
+
+AutoFarmButton.MouseEnter:Connect(function()
+	TweenService:Create(
+		AutoFarmButton,
+		TweenInfo.new(0.12),
+		{BackgroundColor3 = Color3.fromRGB(45, 45, 45)}
+	):Play()
+end)
+
+AutoFarmButton.MouseLeave:Connect(function()
+	TweenService:Create(
+		AutoFarmButton,
+		TweenInfo.new(0.12),
+		{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
+	):Play()
+end)
+
+AutoFarmButton.MouseButton1Click:Connect(function()
+	Farming = not Farming
+
+	if Farming then
+		AutoFarmButton.Text = "AUTO FARM  :  ON"
+	else
+		AutoFarmButton.Text = "AUTO FARM  :  OFF"
+	end
+end)
+
+local db = false
+local db2 = false
+
+game.RunService.RenderStepped:Connect(function()
+	local Requirements = game.Players.LocalPlayer.PlayerGui.PlayerMain.Dark.InvitePlayer.Requirements
+	local Teleporter = Requirements.Teleporter.Value
+	local Boss = Requirements.Boss.Value
+	
+	local OnCombat = game.Players.LocalPlayer.Character:FindFirstChild("OnCombat")
+	
+	if Farming and CurrentlyFarming ~= "" and OnCombat.Value == false then
+		if db2 then return end
+		db2 = true
+		task.delay(5, function()
+			db2 = false
+		end)
+		local FindPortal = Portals:FindFirstChild(CurrentlyFarming)
+		if FindPortal then
+			local FindTeleport = FindPortal:FindFirstChild("Head")
+			if FindTeleport then
+				local Character = game.Players.LocalPlayer.Character
+				local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+				if HumanoidRootPart then
+					HumanoidRootPart.CFrame = FindTeleport.CFrame
+				end
+			end
+		end
+	end
+
+	if Teleporter == "" and Boss == "" and AutoInv == true then return end
+	if db then return end
+	db = true
+	task.delay(5, function()
+		db = false
+	end)
+	game.ReplicatedStorage.GameRemotes.InvitedPlayers:FireServer(
+		TargetPlayer2,
+		Teleporter,
+		Boss
+	)
+	
+end)
+
+Remote.OnClientEvent:Connect(function(InviterName, BattleName, p3, p4)
+	if InviterName ~= TargetPlayer1 then return end
+	if AutoAcp == false then return end
+	
+	Remote:FireServer(p3, p4)
+end)
