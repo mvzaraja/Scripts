@@ -282,7 +282,7 @@ local function CreateBattle(Name)
 
 	Container(ActiveButton, 2)
 
-	Battle:SetAttribute("EnemyName", Settings.Destination)
+   Battle:SetAttribute("EnemyName", Settings.Destination)
 
 	
 
