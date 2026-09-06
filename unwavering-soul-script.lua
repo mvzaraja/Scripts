@@ -690,7 +690,7 @@ Intro.Size = UDim2.new(0.11, 0,0.2, 0)
 Intro.Position = UDim2.new(0.5, 0, 0.5, 0)
 Intro.AnchorPoint = Vector2.new(0.5,0.5)
 
-Intro.Image = "rbxassetid://77984746163459"
+Intro.Image = "rbxassetid://126590394833011"
 
 Intro.BackgroundColor3 = Color3.fromRGB(35,35,35)
 Intro.ZIndex = 1001
