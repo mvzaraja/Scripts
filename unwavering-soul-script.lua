@@ -1,4 +1,5 @@
 
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
@@ -6,6 +7,7 @@ local Portals = workspace:FindFirstChild("Portals")
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local CurrentlyFarming
 local Remote = game.ReplicatedStorage.GameRemotes.NotificationToFight
+
 local TargetPlayer1
 local TargetPlayer2
 local AutoAcp = false
@@ -665,8 +667,63 @@ Closebtn.Font = Enum.Font.Arcade
 
 Border(Closebtn, 3)
 
+
+
+local function Tween(Object, Time, goal)
+	TweenService:Create(Object, TweenInfo.new(Time, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), goal):Play()
+end
+
+Frame.Visible = false
+Closebtn.Visible = false
+local BlackScreen = Instance.new("Frame", GUI)
+BlackScreen.Size = UDim2.new(1, 0,1, 0)
+BlackScreen.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BlackScreen.ZIndex = 1000
+BlackScreen.Visible = true
+BlackScreen.BackgroundTransparency = 1
+
+local Intro = Instance.new("ImageLabel", GUI)
+Intro.Size = UDim2.new(0.11, 0,0.2, 0)
+Intro.Position = UDim2.new(0.5, 0, 0.5, 0)
+Intro.AnchorPoint = Vector2.new(0.5,0.5)
+Intro.Image = "rbxassetid://110534796346281"
+Intro.BackgroundColor3 = Color3.fromRGB(35,35,35)
+Intro.ZIndex = 1001
+Intro.ImageTransparency = 1
+Intro.BackgroundTransparency = 1
+
+
+local UiStroke = Instance.new("UIStroke", Intro)
+UiStroke.Color = Color3.fromRGB(255, 255, 255)
+UiStroke.Thickness = 4
+
+local UiScale = Instance.new("UIScale", Intro)
+UiScale.Scale = 5
+
+RunService.RenderStepped:Connect(function()
+	Intro.Rotation += 1
+end)
+
+Tween(BlackScreen, 1, {BackgroundTransparency = 0})
+
+task.wait(1)
+
+Tween(Intro, 1, {BackgroundTransparency = 0})
+Tween(Intro, 1, {ImageTransparency = 0})
+
+task.wait(3)
+
+
+
+Tween(BlackScreen, 1, {BackgroundTransparency = 1})
+Tween(UiScale, 1, {Scale = 1})
+Tween(Intro, 1, {Position = UDim2.new(0.066, 0,0.885, 0)})
+
+task.wait(1.2)
+
+Closebtn.Visible = true
+Frame.Visible = true
+
 Closebtn.Activated:Connect(function()
 	Frame.Visible = not Frame.Visible
 end)
-
-
