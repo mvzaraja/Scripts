@@ -1,3 +1,4 @@
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
@@ -96,7 +97,7 @@ local function CreateSetting(Y, Placeholder)
 	Textbox.TextScaled = true
 	Textbox.Font = Enum.Font.Arcade
 	Textbox.ClearTextOnFocus = false
-	
+
 	Textbox.FocusLost:Connect(function()
 		if Placeholder == "Auto Accpet Invites From Player" then
 			TargetPlayer1 = Textbox.Text
@@ -141,13 +142,13 @@ local function CreateSetting(Y, Placeholder)
 
 	Button.MouseButton1Click:Connect(function()
 		if Placeholder == "Auto Accpet Invites From Player" then
-		Enabled = not Enabled
-		Button.Text = Enabled and "ON" or "OFF"
-		AutoAcp = Enabled
+			Enabled = not Enabled
+			Button.Text = Enabled and "ON" or "OFF"
+			AutoAcp = Enabled
 		elseif Placeholder == "Auto Invite Player to Battle" then
-		Enabled = not Enabled
-		Button.Text = Enabled and "ON" or "OFF"
-		AutoInv = Enabled
+			Enabled = not Enabled
+			Button.Text = Enabled and "ON" or "OFF"
+			AutoInv = Enabled
 		end
 	end)
 
@@ -176,11 +177,27 @@ BattleHeader.Font = Enum.Font.Arcade
 Border(BattleHeader, 3)
 
 
+local SearchBox = Instance.new("TextBox")
+SearchBox.Parent = Frame
+SearchBox.Size = UDim2.new(0.9, 0, 0.055, 0)
+SearchBox.Position = UDim2.new(0.05, 0, 0.475, 0)
+SearchBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+SearchBox.BorderSizePixel = 0
+SearchBox.PlaceholderText = "SEARCH BATTLES..."
+SearchBox.PlaceholderColor3 = Color3.fromRGB(130, 130, 130)
+SearchBox.Text = ""
+SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+SearchBox.TextScaled = true
+SearchBox.Font = Enum.Font.Arcade
+SearchBox.ClearTextOnFocus = false
+
+Border(SearchBox, 3)
+
 
 local ScrollingBattle = Instance.new("ScrollingFrame")
 ScrollingBattle.Parent = Frame
-ScrollingBattle.Size = UDim2.new(0.9, 0, 0.32, 0)
-ScrollingBattle.Position = UDim2.new(0.05, 0, 0.475, 0)
+ScrollingBattle.Size = UDim2.new(0.9, 0, 0.255, 0)
+ScrollingBattle.Position = UDim2.new(0.05, 0, 0.54, 0)
 ScrollingBattle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ScrollingBattle.BorderSizePixel = 0
 ScrollingBattle.ScrollBarThickness = 3
@@ -215,6 +232,8 @@ local function CreateBattle(Name)
 	Battle.Font = Enum.Font.Arcade
 	Battle.TextXAlignment = Enum.TextXAlignment.Left
 	Battle.AutoButtonColor = false
+
+	Battle:SetAttribute("BattleName", Name)
 
 	local Padding = Instance.new("UIPadding")
 	Padding.Parent = Battle
@@ -256,14 +275,52 @@ local function CreateBattle(Name)
 end
 
 local function UpdateBattle()
+	for _, Battle in ScrollingBattle:GetChildren() do
+		if Battle:IsA("TextButton") then
+			Battle:Destroy()
+		end
+	end
+
 	local FindAllBattles = Portals:GetChildren()
-	
+
 	for i,v in pairs(FindAllBattles) do
 		if v:IsA("Model") then
 			CreateBattle(v.Name)
 		end
 	end
+
+	local Search = SearchBox.Text:lower()
+
+	for _, Battle in ScrollingBattle:GetChildren() do
+		if Battle:IsA("TextButton") then
+			local BattleName = Battle:GetAttribute("BattleName")
+
+			if BattleName and Search ~= "" then
+				Battle.Visible = BattleName:lower():find(Search, 1, true) ~= nil
+			else
+				Battle.Visible = true
+			end
+		end
+	end
 end
+
+SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	local Search = SearchBox.Text:lower()
+
+	for _, Battle in ScrollingBattle:GetChildren() do
+		if Battle:IsA("TextButton") then
+			local BattleName = Battle:GetAttribute("BattleName")
+
+			if BattleName then
+				if Search == "" then
+					Battle.Visible = true
+				else
+					Battle.Visible = BattleName:lower():find(Search, 1, true) ~= nil
+				end
+			end
+		end
+	end
+end)
 
 UpdateBattle()
 Portals.ChildAdded:Connect(UpdateBattle)
@@ -329,9 +386,9 @@ game.RunService.RenderStepped:Connect(function()
 	local Requirements = game.Players.LocalPlayer.PlayerGui.PlayerMain.Dark.InvitePlayer.Requirements
 	local Teleporter = Requirements.Teleporter.Value
 	local Boss = Requirements.Boss.Value
-	
+
 	local OnCombat = game.Players.LocalPlayer.Character:FindFirstChild("OnCombat")
-	
+
 	if Farming and CurrentlyFarming ~= "" and OnCombat.Value == false then
 		if db2 then return end
 		db2 = true
@@ -362,12 +419,28 @@ game.RunService.RenderStepped:Connect(function()
 		Teleporter,
 		Boss
 	)
-	
+
 end)
 
 Remote.OnClientEvent:Connect(function(InviterName, BattleName, p3, p4)
 	if InviterName ~= TargetPlayer1 then return end
 	if AutoAcp == false then return end
-	
+
 	Remote:FireServer(p3, p4)
 end)
+
+local Closebtn = Instance.new("TextButton", GUI)
+Closebtn.Size = UDim2.new(0.135, 0,0.115, 0)
+Closebtn.Position = UDim2.new(0.848, 0,0.303, 0)
+Closebtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Closebtn.Text = "unwavering-Soul"
+Closebtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Closebtn.TextScaled = true
+Closebtn.Font = Enum.Font.Arcade
+
+Border(Closebtn, 3)
+
+Closebtn.Activated:Connect(function()
+	Frame.Visible = not Frame.Visible
+end)
+
