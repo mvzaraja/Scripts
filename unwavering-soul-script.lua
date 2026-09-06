@@ -234,7 +234,7 @@ local function CreateBattle(Name)
 	Battle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	Battle.BorderSizePixel = 0
 	Battle.Text = "▶  " .. Name
-	Battle.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Battle.TextColor3 = Color3.fromRGB(0,0,0)
 	Battle.TextScaled = true
 	Battle.Font = Enum.Font.Arcade
 	Battle.TextXAlignment = Enum.TextXAlignment.Left
@@ -252,7 +252,7 @@ local function CreateBattle(Name)
 		TweenService:Create(
 			Battle,
 			TweenInfo.new(0.1),
-			{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+			{BackgroundColor3 = Color3.fromRGB(0,0,0)}
 		):Play()
 
 		Battle.Text = "▶  " .. Name
@@ -353,7 +353,7 @@ FarmHeader.Font = Enum.Font.Arcade
 local AutoFarmButton = Instance.new("TextButton")
 AutoFarmButton.Parent = Frame
 AutoFarmButton.Size = UDim2.new(0.5, 0, 0.08, 0)
-AutoFarmButton.Position = UDim2.new(0.05, 0, 0.87, 0)
+AutoFarmButton.Position = UDim2.new(0, 0, 0.87, 0)
 AutoFarmButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 AutoFarmButton.BorderSizePixel = 0
 AutoFarmButton.Text = "AUTO FARM  :  OFF"
@@ -365,7 +365,7 @@ AutoFarmButton.AutoButtonColor = false
 
 local AutoSmartButon = Instance.new("TextButton", Frame)
 AutoSmartButon.Size = UDim2.new(0.5, 0, 0.08, 0)
-AutoSmartButon.Position = UDim2.new(0.1, 0, 0.87, 0)
+AutoSmartButon.Position = UDim2.new(0.5, 0, 0.87, 0)
 AutoSmartButon.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 AutoSmartButon.BorderSizePixel = 0
 AutoSmartButon.Text = "AUTO SMART FARM  :  OFF"
@@ -473,107 +473,112 @@ game.RunService.RenderStepped:Connect(function()
 	)
 
 
-	if SmartFarm and OnCombat == false then
 
-		local Player = game.Players.LocalPlayer
-		local leaderstats = Player:FindFirstChild("leaderstats")
 
-		if leaderstats then
+end)
 
-			local Level = leaderstats:FindFirstChild("Level")
-			local TP = leaderstats:FindFirstChild("TP")
-			local Reset = leaderstats:FindFirstChild("Reset")
-			local TrueReset = leaderstats:FindFirstChild("TrueReset")
+local OnCombat = game.Players.LocalPlayer.Character:FindFirstChild("OnCombat")
+game.RunService.RenderStepped:Connect(function()
+		if SmartFarm == true and OnCombat.Value == false then
 
-			if Level and TP and Reset and TrueReset then
+			local Player = game.Players.LocalPlayer
+			local leaderstats = Player:FindFirstChild("leaderstats")
+			print("Checking player stats...")
+			if leaderstats then
+				print("Leaderstats Found")
+		     	local Level = leaderstats:FindFirstChild("LV")
+			    local TP = leaderstats:FindFirstChild("TP")
+				local Reset = leaderstats:FindFirstChild("Reset")
+		     	local TrueReset = leaderstats:FindFirstChild("TrueReset")
 
-				local PlayerLevel = Level.Value
-				local PlayerTP = TP.Value
-				local PlayerReset = Reset.Value
-				local PlayerTrueReset = TrueReset.Value
+				if Level and TP and Reset and TrueReset then
+					print("Checking Levels Resets Tp TRUES TReEtss")
+					local PlayerLevel = Level.Value
+					local PlayerTP = TP.Value
+					local PlayerReset = Reset.Value
+					local PlayerTrueReset = TrueReset.Value
 
-				local BestBattle = nil
-				local BestSettings = nil
+					local BestBattle = nil
+					local BestSettings = nil
 
-				local BestReset = -math.huge
-				local BestTrueReset = -math.huge
-				local BestLevel = -math.huge
+					local BestReset = -math.huge
+					local BestTrueReset = -math.huge
+					local BestLevel = -math.huge
 
-				for _, v in pairs(game.Workspace.Portals:GetChildren()) do
+					for _, v in pairs(game.Workspace.Portals:GetChildren()) do
 
-					if v:IsA("Model") then
+						if v:IsA("Model") then
 
-						local TelepoterConfig = v:FindFirstChild("TeleporterConfig")
+							local TelepoterConfig = v:FindFirstChild("TeleporterConfig")
 
-						if TelepoterConfig then
+							if TelepoterConfig then
+								print("FOUND TELEPORTERCONFIG")
+								local Settings = require(TelepoterConfig)
 
-							local Settings = require(TelepoterConfig)
+								local RequiredLevel = Settings.RequiredLevel or 0
+								local RequiredTP = Settings.RequiredTP or 0
+								local RequiredReset = Settings.RequiredReset or 0
+								local RequiredTrueReset = Settings.RequiredTrueReset or 0
 
-							local RequiredLevel = Settings.RequiredLevel or 0
-							local RequiredTP = Settings.RequiredTP or 0
-							local RequiredReset = Settings.RequiredReset or 0
-							local RequiredTrueReset = Settings.RequiredTrueReset or 0
+								local MeetsRequirements =
+									RequiredLevel <= PlayerLevel
+									and RequiredTP <= PlayerTP
+									and RequiredReset <= PlayerReset
+									and RequiredTrueReset <= PlayerTrueReset
 
-							local MeetsRequirements =
-								RequiredLevel <= PlayerLevel
-								and RequiredTP <= PlayerTP
-								and RequiredReset <= PlayerReset
-								and RequiredTrueReset <= PlayerTrueReset
+								local Within300Levels =
+									PlayerLevel <= RequiredLevel + 300
 
-							local Within300Levels =
-								PlayerLevel <= RequiredLevel + 300
+								if MeetsRequirements and Within300Levels then
 
-							if MeetsRequirements and Within300Levels then
+									local IsBetter = false
 
-								local IsBetter = false
-
-								if RequiredReset > BestReset then
-									IsBetter = true
-
-								elseif RequiredReset == BestReset then
-
-									if RequiredTrueReset > BestTrueReset then
+									if RequiredReset > BestReset then
 										IsBetter = true
 
-									elseif RequiredTrueReset == BestTrueReset
-										and RequiredLevel > BestLevel then
-										IsBetter = true
+									elseif RequiredReset == BestReset then
+
+										if RequiredTrueReset > BestTrueReset then
+											IsBetter = true
+
+										elseif RequiredTrueReset == BestTrueReset
+											and RequiredLevel > BestLevel then
+											IsBetter = true
+										end
 									end
-								end
 
-								if IsBetter then
-									BestBattle = v
-									BestSettings = Settings
+									if IsBetter then
+										BestBattle = v
+										BestSettings = Settings
 
-									BestReset = RequiredReset
-									BestTrueReset = RequiredTrueReset
-									BestLevel = RequiredLevel
+										BestReset = RequiredReset
+										BestTrueReset = RequiredTrueReset
+										BestLevel = RequiredLevel
+									end
 								end
 							end
 						end
 					end
-				end
 
-				if BestBattle then
-					print("Best Battle:", BestBattle.Name)
-					print("Required Level:", BestSettings.RequiredLevel)
-					print("Required TP:", BestSettings.RequiredTP)
-					print("Required Reset:", BestSettings.RequiredReset)
-					print("Required True Reset:", BestSettings.RequiredTrueReset)
+					if BestBattle then
+						print("Best Battle:", BestBattle.Name)
+						print("Required Level:", BestSettings.RequiredLevel)
+						print("Required TP:", BestSettings.RequiredTP)
+						print("Required Reset:", BestSettings.RequiredReset)
+						print("Required True Reset:", BestSettings.RequiredTrueReset)
 
-					local FindTeleport = BestBattle:FindFirstChild("Head")
-					if FindTeleport then
-						local Character = game.Players.LocalPlayer.Character
-						local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-						if HumanoidRootPart then
-							HumanoidRootPart.CFrame = FindTeleport.CFrame
+						local FindTeleport = BestBattle:FindFirstChild("Head")
+						if FindTeleport then
+							local Character = game.Players.LocalPlayer.Character
+							local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+							if HumanoidRootPart then
+								HumanoidRootPart.CFrame = FindTeleport.CFrame
+							end
 						end
 					end
 				end
 			end
-		end
 	end
-
 end)
 
 Remote.OnClientEvent:Connect(function(InviterName, BattleName, p3, p4)
