@@ -183,7 +183,6 @@ BattleHeader.Font = Enum.Font.Arcade
 Border(BattleHeader, 3)
 
 
--- SEARCH BUTTON / BOX
 local SearchBox = Instance.new("TextBox")
 SearchBox.Parent = Frame
 SearchBox.Size = UDim2.new(0.9, 0, 0.055, 0)
@@ -227,35 +226,82 @@ Layout.Padding = UDim.new(0, 7)
 Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
 
+
 local function CreateBattle(Name)
-	local Battle = Instance.new("TextButton")
+	local Portal = workspace.Portals:FindFirstChild(Name)
+
+	if Portal then
+		local TeleporterConfig = Portal:FindFirstChild("TeleporterConfig")
+
+		if TeleporterConfig then
+			local Settings = require(TeleporterConfig)
+			
+	local Battle = Instance.new("Frame")
 	Battle.Parent = ScrollingBattle
-	Battle.Size = UDim2.new(1, 0, 0, 42)
+	Battle.Size = UDim2.new(1, 0, 0, 52)
 	Battle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	Battle.BorderSizePixel = 0
-	Battle.Text = "▶  " .. Name
-	Battle.TextColor3 = Color3.fromRGB(0,0,0)
-	Battle.TextScaled = true
-	Battle.Font = Enum.Font.Arcade
-	Battle.TextXAlignment = Enum.TextXAlignment.Left
-	Battle.AutoButtonColor = false
+
+	Container(Battle, 2)
+
+	local EnemyName = Instance.new("TextLabel")
+	EnemyName.Parent = Battle
+	EnemyName.BackgroundTransparency = 1
+	EnemyName.Position = UDim2.new(0, 10, 0, 3)
+	EnemyName.Size = UDim2.new(1, -100, 0, 22)
+	EnemyName.Text = "▶  " .. Settings.Destination
+	EnemyName.TextColor3 = Color3.fromRGB(255, 255, 255)
+	EnemyName.TextScaled = true
+	EnemyName.Font = Enum.Font.Arcade
+	EnemyName.TextXAlignment = Enum.TextXAlignment.Left
+
+	local Requirements = Instance.new("TextLabel")
+	Requirements.Parent = Battle
+	Requirements.BackgroundTransparency = 1
+	Requirements.Position = UDim2.new(0, 10, 0, 27)
+	Requirements.Size = UDim2.new(1, -100, 0, 18)
+	Requirements.Text = "Loading requirements..."
+	Requirements.TextColor3 = Color3.fromRGB(180, 180, 180)
+	Requirements.TextScaled = true
+	Requirements.Font = Enum.Font.Arcade
+	Requirements.TextXAlignment = Enum.TextXAlignment.Left
+
+	local ActiveButton = Instance.new("TextButton")
+	ActiveButton.Parent = Battle
+	ActiveButton.Name = "ActiveButton"
+	ActiveButton.Size = UDim2.new(0, 75, 0, 34)
+	ActiveButton.Position = UDim2.new(1, -83, 0.5, -17)
+	ActiveButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	ActiveButton.BorderSizePixel = 0
+	ActiveButton.Text = "SELECT"
+	ActiveButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	ActiveButton.TextScaled = true
+	ActiveButton.Font = Enum.Font.Arcade
+	ActiveButton.AutoButtonColor = false
+
+	Container(ActiveButton, 2)
 
 	Battle:SetAttribute("BattleName", Name)
 
-	local Padding = Instance.new("UIPadding")
-	Padding.Parent = Battle
-	Padding.PaddingLeft = UDim.new(0, 10)
+	
 
-	Container(Battle, 2)
+			local RequiredLevel = Settings.RequiredLevel or 0
+			local RequiredTP = Settings.RequiredTP or 0
+			local RequiredReset = Settings.RequiredReset or 0
+			local RequiredTrueReset = Settings.RequiredTrueReset or 0
+
+			Requirements.Text =
+				"LVL " .. RequiredLevel ..
+				"  |  TP " .. RequiredTP ..
+				"  |  RESET " .. RequiredReset ..
+				"  |  TRUE RESET " .. RequiredTrueReset
 
 	Battle.MouseEnter:Connect(function()
 		TweenService:Create(
 			Battle,
 			TweenInfo.new(0.1),
-			{BackgroundColor3 = Color3.fromRGB(0,0,0)}
+			{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
 		):Play()
-
-		Battle.Text = "▶  " .. Name
 	end)
 
 	Battle.MouseLeave:Connect(function()
@@ -266,19 +312,43 @@ local function CreateBattle(Name)
 		):Play()
 	end)
 
-	Battle.MouseButton1Click:Connect(function()
+	ActiveButton.MouseEnter:Connect(function()
+		TweenService:Create(
+			ActiveButton,
+			TweenInfo.new(0.1),
+			{BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+		):Play()
+	end)
+
+	ActiveButton.MouseLeave:Connect(function()
+		TweenService:Create(
+			ActiveButton,
+			TweenInfo.new(0.1),
+			{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
+		):Play()
+	end)
+
+	ActiveButton.MouseButton1Click:Connect(function()
 		for _, Other in ScrollingBattle:GetChildren() do
-			if Other:IsA("TextButton") then
-				Other.TextColor3 = Color3.fromRGB(180, 180, 180)
+			if Other:IsA("Frame") then
+				local OtherButton = Other:FindFirstChild("ActiveButton")
+
+				if OtherButton then
+					OtherButton.Text = "SELECT"
+					OtherButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+				end
 			end
 		end
 
-		Battle.TextColor3 = Color3.fromRGB(55, 255, 0)
-		Battle.Text = "◆  " .. Name
+		ActiveButton.Text = "ACTIVE"
+		ActiveButton.TextColor3 = Color3.fromRGB(55, 255, 0)
+
 		CurrentlyFarming = Name
 	end)
 
 	return Battle
+	end
+	end
 end
 
 local function UpdateBattle()
@@ -292,13 +362,7 @@ local function UpdateBattle()
 
 	for i,v in pairs(FindAllBattles) do
 		if v:IsA("Model") then
-			local TeleportConfig = v:FindFirstChild("TeleporterConfig")
-			if TeleportConfig then
-				local Settings = require(TeleportConfig)
-				if Settings.Destination and Settings.RequiredLevel then
-				CreateBattle(Settings.Destination.." REQUIRD LEVEL: "..Settings.RequiredLevel)
-				end
-			end
+			CreateBattle(v.Name)
 		end
 	end
 
