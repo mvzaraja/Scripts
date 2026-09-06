@@ -246,6 +246,7 @@ local function CreateBattle(Name)
 
 	local EnemyName = Instance.new("TextLabel")
 	EnemyName.Parent = Battle
+	EnemyName.Name = "EnemyName"
 	EnemyName.BackgroundTransparency = 1
 	EnemyName.Position = UDim2.new(0, 10, 0, 3)
 	EnemyName.Size = UDim2.new(1, -100, 0, 22)
@@ -281,7 +282,7 @@ local function CreateBattle(Name)
 
 	Container(ActiveButton, 2)
 
-	Battle:SetAttribute("BattleName", Name)
+	Battle:SetAttribute("EnemyName", Settings.Destination)
 
 	
 
@@ -369,8 +370,8 @@ local function UpdateBattle()
 	local Search = SearchBox.Text:lower()
 
 	for _, Battle in ScrollingBattle:GetChildren() do
-		if Battle:IsA("TextButton") then
-			local BattleName = Battle:GetAttribute("BattleName")
+		if Battle:IsA("Frame") then
+			local BattleName = Battle:GetAttribute("EnemyName")
 
 			if BattleName and Search ~= "" then
 				Battle.Visible = BattleName:lower():find(Search, 1, true) ~= nil
@@ -385,8 +386,8 @@ SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
 	local Search = SearchBox.Text:lower()
 
 	for _, Battle in ScrollingBattle:GetChildren() do
-		if Battle:IsA("TextButton") then
-			local BattleName = Battle:GetAttribute("BattleName")
+		if Battle:IsA("Frame") then
+			local BattleName = Battle:GetAttribute("EnemyName")
 
 			if BattleName then
 				if Search == "" then
