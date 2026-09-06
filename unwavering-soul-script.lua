@@ -10,7 +10,7 @@ local TargetPlayer1
 local TargetPlayer2
 local AutoAcp = false
 local AutoInv = false
-
+local SmartFarm = false
 
 local GUI = Instance.new("ScreenGui")
 GUI.Name = "BattleMenu"
@@ -54,6 +54,12 @@ local function Border(Object, Thickness)
 	Border.ZIndex = Object.ZIndex - 1
 
 	return Border
+end
+
+local function Container(Object, Thickness)
+	local UiStroke = Instance.new("UIStroke", Object)
+	UiStroke.Color = Color3.fromRGB(255, 255, 255)
+	UiStroke.Thickness = Thickness
 end
 
 
@@ -240,7 +246,7 @@ local function CreateBattle(Name)
 	Padding.Parent = Battle
 	Padding.PaddingLeft = UDim.new(0, 10)
 
-	Border(Battle, 2)
+	Container(Battle, 2)
 
 	Battle.MouseEnter:Connect(function()
 		TweenService:Create(
@@ -289,7 +295,9 @@ local function UpdateBattle()
 			local TeleportConfig = v:FindFirstChild("TeleporterConfig")
 			if TeleportConfig then
 				local Settings = require(TeleportConfig)
+				if Settings.Destination and Settings.RequiredLevel then
 				CreateBattle(Settings.Destination.." REQUIRD LEVEL: "..Settings.RequiredLevel)
+				end
 			end
 		end
 	end
@@ -344,7 +352,7 @@ FarmHeader.Font = Enum.Font.Arcade
 
 local AutoFarmButton = Instance.new("TextButton")
 AutoFarmButton.Parent = Frame
-AutoFarmButton.Size = UDim2.new(0.9, 0, 0.08, 0)
+AutoFarmButton.Size = UDim2.new(0.5, 0, 0.08, 0)
 AutoFarmButton.Position = UDim2.new(0.05, 0, 0.87, 0)
 AutoFarmButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 AutoFarmButton.BorderSizePixel = 0
@@ -354,7 +362,20 @@ AutoFarmButton.TextScaled = true
 AutoFarmButton.Font = Enum.Font.Arcade
 AutoFarmButton.AutoButtonColor = false
 
+
+local AutoSmartButon = Instance.new("TextButton", Frame)
+AutoSmartButon.Size = UDim2.new(0.5, 0, 0.08, 0)
+AutoSmartButon.Position = UDim2.new(0.1, 0, 0.87, 0)
+AutoSmartButon.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+AutoSmartButon.BorderSizePixel = 0
+AutoSmartButon.Text = "AUTO SMART FARM  :  OFF"
+AutoSmartButon.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoSmartButon.TextScaled = true
+AutoSmartButon.Font = Enum.Font.Arcade
+AutoSmartButon.AutoButtonColor = false
+
 Border(AutoFarmButton, 3)
+Border(AutoSmartButon, 3)
 
 local Farming = false
 
@@ -374,6 +395,22 @@ AutoFarmButton.MouseLeave:Connect(function()
 	):Play()
 end)
 
+AutoSmartButon.MouseEnter:Connect(function()
+	TweenService:Create(
+		AutoSmartButon,
+		TweenInfo.new(0.12),
+		{BackgroundColor3 = Color3.fromRGB(45, 45, 45)}
+	):Play()
+end)
+
+AutoSmartButon.MouseLeave:Connect(function()
+	TweenService:Create(
+		AutoSmartButon,
+		TweenInfo.new(0.12),
+		{BackgroundColor3 = Color3.fromRGB(0, 0, 0)}
+	):Play()
+end)
+
 AutoFarmButton.MouseButton1Click:Connect(function()
 	Farming = not Farming
 
@@ -381,6 +418,16 @@ AutoFarmButton.MouseButton1Click:Connect(function()
 		AutoFarmButton.Text = "AUTO FARM  :  ON"
 	else
 		AutoFarmButton.Text = "AUTO FARM  :  OFF"
+	end
+end)
+
+AutoSmartButon.MouseButton1Click:Connect(function()
+	SmartFarm = not SmartFarm
+	
+	if SmartFarm then
+		AutoSmartButon.Text = "AUTO SMART FARM  :  ON"
+	else
+		AutoSmartButon.Text = "AUTO SMART FARM  :  OFF"
 	end
 end)
 
@@ -425,6 +472,108 @@ game.RunService.RenderStepped:Connect(function()
 		Boss
 	)
 
+
+	if SmartFarm and OnCombat == false then
+
+		local Player = game.Players.LocalPlayer
+		local leaderstats = Player:FindFirstChild("leaderstats")
+
+		if leaderstats then
+
+			local Level = leaderstats:FindFirstChild("Level")
+			local TP = leaderstats:FindFirstChild("TP")
+			local Reset = leaderstats:FindFirstChild("Reset")
+			local TrueReset = leaderstats:FindFirstChild("TrueReset")
+
+			if Level and TP and Reset and TrueReset then
+
+				local PlayerLevel = Level.Value
+				local PlayerTP = TP.Value
+				local PlayerReset = Reset.Value
+				local PlayerTrueReset = TrueReset.Value
+
+				local BestBattle = nil
+				local BestSettings = nil
+
+				local BestReset = -math.huge
+				local BestTrueReset = -math.huge
+				local BestLevel = -math.huge
+
+				for _, v in pairs(game.Workspace.Portals:GetChildren()) do
+
+					if v:IsA("Model") then
+
+						local TelepoterConfig = v:FindFirstChild("TeleporterConfig")
+
+						if TelepoterConfig then
+
+							local Settings = require(TelepoterConfig)
+
+							local RequiredLevel = Settings.RequiredLevel or 0
+							local RequiredTP = Settings.RequiredTP or 0
+							local RequiredReset = Settings.RequiredReset or 0
+							local RequiredTrueReset = Settings.RequiredTrueReset or 0
+
+							local MeetsRequirements =
+								RequiredLevel <= PlayerLevel
+								and RequiredTP <= PlayerTP
+								and RequiredReset <= PlayerReset
+								and RequiredTrueReset <= PlayerTrueReset
+
+							local Within300Levels =
+								PlayerLevel <= RequiredLevel + 300
+
+							if MeetsRequirements and Within300Levels then
+
+								local IsBetter = false
+
+								if RequiredReset > BestReset then
+									IsBetter = true
+
+								elseif RequiredReset == BestReset then
+
+									if RequiredTrueReset > BestTrueReset then
+										IsBetter = true
+
+									elseif RequiredTrueReset == BestTrueReset
+										and RequiredLevel > BestLevel then
+										IsBetter = true
+									end
+								end
+
+								if IsBetter then
+									BestBattle = v
+									BestSettings = Settings
+
+									BestReset = RequiredReset
+									BestTrueReset = RequiredTrueReset
+									BestLevel = RequiredLevel
+								end
+							end
+						end
+					end
+				end
+
+				if BestBattle then
+					print("Best Battle:", BestBattle.Name)
+					print("Required Level:", BestSettings.RequiredLevel)
+					print("Required TP:", BestSettings.RequiredTP)
+					print("Required Reset:", BestSettings.RequiredReset)
+					print("Required True Reset:", BestSettings.RequiredTrueReset)
+
+					local FindTeleport = BestBattle:FindFirstChild("Head")
+					if FindTeleport then
+						local Character = game.Players.LocalPlayer.Character
+						local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+						if HumanoidRootPart then
+							HumanoidRootPart.CFrame = FindTeleport.CFrame
+						end
+					end
+				end
+			end
+		end
+	end
+
 end)
 
 Remote.OnClientEvent:Connect(function(InviterName, BattleName, p3, p4)
@@ -448,4 +597,5 @@ Border(Closebtn, 3)
 Closebtn.Activated:Connect(function()
 	Frame.Visible = not Frame.Visible
 end)
+
 
