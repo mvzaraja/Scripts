@@ -722,7 +722,7 @@ task.wait(3)
 
 Tween(BlackScreen, 1, {BackgroundTransparency = 1})
 Tween(UiScale, 1, {Scale = 1})
-Tween(Intro, 1, {Position = UDim2.new(0.066, 0,0.885, 0)})
+Tween(Intro, 1, {Position = UDim2.new(0.928, 0,0.863, 0)})
 
 task.wait(1.2)
 
@@ -732,3 +732,14 @@ Frame.Visible = true
 Closebtn.Activated:Connect(function()
 	Frame.Visible = not Frame.Visible
 end)
+
+task.wait(10)
+
+Tween(Intro, 1, {ImageTransparency = 1})
+Tween(Intro, 1, {BackgroundTransparency = 1})
+Tween(UiStroke, 1, {Transparency = 1})
+
+task.wait(1)
+
+Intro:Destroy()
+BlackScreen:Destroy()
