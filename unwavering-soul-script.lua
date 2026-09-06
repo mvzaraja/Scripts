@@ -28,6 +28,7 @@ Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 Frame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
 Frame.BorderSizePixel = 0
 Frame.Active = true
+Frame.Visible = false
 Frame.Draggable = true
 
 local FrameStroke = Instance.new("UIStroke")
@@ -664,6 +665,7 @@ Closebtn.Text = "unwavering-Soul"
 Closebtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Closebtn.TextScaled = true
 Closebtn.Font = Enum.Font.Arcade
+Closebtn.Visible = false
 
 Border(Closebtn, 3)
 
@@ -675,6 +677,7 @@ end
 
 Frame.Visible = false
 Closebtn.Visible = false
+
 local BlackScreen = Instance.new("Frame", GUI)
 BlackScreen.Size = UDim2.new(1, 0,1, 0)
 BlackScreen.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -686,7 +689,9 @@ local Intro = Instance.new("ImageLabel", GUI)
 Intro.Size = UDim2.new(0.11, 0,0.2, 0)
 Intro.Position = UDim2.new(0.5, 0, 0.5, 0)
 Intro.AnchorPoint = Vector2.new(0.5,0.5)
-Intro.Image = "rbxassetid://110534796346281"
+
+Intro.Image = "rbxassetid://77984746163459"
+
 Intro.BackgroundColor3 = Color3.fromRGB(35,35,35)
 Intro.ZIndex = 1001
 Intro.ImageTransparency = 1
